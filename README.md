@@ -1,3 +1,33 @@
+# Cursed adaptaion of Stretch AI to work in our sim
+
+1. in terminal `[1]` build "ros2 bridge server"
+
+```
+cd docker
+docker build -f Dockerfile.ros2 --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t stretch_ai_custom:latest .
+```
+
+2. in terminal `[2]` install pixi enviornment for dynamem
+
+```
+pixi shell
+```
+
+3. in terminal `[1]` start ros2 bridge container
+
+```
+../scripts/run_stretch_ai_ros2_bridge_server.sh
+```
+
+4. in terminal `[2]` start dynamem
+
+```
+python -m stretch.app.run_dynamem --robot_ip 127.0.0.1
+```
+
+5. start IsaacSim simulation from `https://github.com/Uspfe/stretch_isaac`
+
+
 # Stretch AI
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
