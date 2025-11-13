@@ -505,6 +505,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
             timeout: How long to wait for the motion to complete
             reliable: Whether to resend the action if it is not received
         """
+        return
         if head_pan < self._head_pan_min or head_pan > self._head_pan_max:
             logger.warning(
                 f"Head pan is restricted to be between {self._head_pan_min} and {self._head_pan_max} for safety: was {head_pan}"
@@ -780,6 +781,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
         self, blocking: bool = True, timeout: float = 10.0, verbose: bool = False
     ) -> bool:
         """Open the gripper based on hard-coded presets."""
+        return True
         gripper_target = self._robot_model.GRIPPER_OPEN
         print("[ZMQ CLIENT] Opening gripper to", gripper_target)
         self.gripper_to(gripper_target, blocking=False)
@@ -812,6 +814,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
         verbose: bool = False,
     ) -> bool:
         """Close the gripper based on hard-coded presets."""
+        return True
         gripper_target = (
             self._robot_model.GRIPPER_CLOSED_LOOSE if loose else self._robot_model.GRIPPER_CLOSED
         )
@@ -839,6 +842,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
 
     def gripper_to(self, target: float, blocking: bool = True, reliable: bool = True):
         """Send the gripper to a target position."""
+        return
         next_action = {"gripper": target, "gripper_blocking": blocking}
         self.send_action(next_action, reliable=reliable)
         if blocking:
@@ -857,6 +861,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
         Args:
             verbose: Whether to print out debug information
         """
+        return
         next_action = {"control_mode": "manipulation", "step": self._iter}
         action = self.send_action(next_action)
         if verbose:
@@ -865,15 +870,20 @@ class HomeRobotZmqClient(AbstractRobotClient):
 
     def move_to_nav_posture(self) -> None:
         """Move the robot to the navigation posture. This is where the head is looking forward and the arm is tucked in."""
+        print("move_to_nav_posture 1", flush=True)
         next_action = {"posture": "navigation", "step": self._iter}
+        print("move_to_nav_posture 2", flush=True)
         next_action = self.send_action(next_action)
         self._wait_for_head(constants.STRETCH_NAVIGATION_Q, resend_action=next_action)
+        print("move_to_nav_posture 3", flush=True)
         self._wait_for_mode("navigation")
+        print("move_to_nav_posture 4", flush=True)
         self._wait_for_arm(constants.STRETCH_NAVIGATION_Q)
         assert self.in_navigation_mode()
 
     def move_to_manip_posture(self):
         """This is the pregrasp posture where the head is looking down and right and the arm is tucked in."""
+        return
         next_action = {"posture": "manipulation", "step": self._iter}
         self.send_action(next_action)
         time.sleep(0.1)
@@ -892,6 +902,8 @@ class HomeRobotZmqClient(AbstractRobotClient):
         verbose: bool = False,
     ) -> None:
         """Wait for the head to move to a particular configuration."""
+        print("skip waiting for head")
+        return
         t0 = timeit.default_timer()
         at_goal = False
 
@@ -988,6 +1000,8 @@ class HomeRobotZmqClient(AbstractRobotClient):
         Returns:
             bool: Whether the arm successfully moved to the target configuration
         """
+        print("skip waiting for arm")
+        return True
         t0 = timeit.default_timer()
         while not self._finish:
             joint_positions, joint_velocities, _ = self.get_joint_state()
@@ -1033,6 +1047,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
         Returns:
             bool: Whether the robot successfully switched to the target mode
         """
+        print("waiting for head")
         t0 = timeit.default_timer()
         mode_t0 = None
         while True:
@@ -1082,7 +1097,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
             goal_angle_threshold(float): The threshold for the goal angle
             resend_action(dict): The action to resend if the robot is not moving. If none, do not resend.
         """
-        print("=" * 20, f"Waiting for {block_id} at goal", "=" * 20)
+        print("=" * 20, f"Waiting for {block_id} at goal", "=" * 20, flush=True)
         last_pos = None
         last_ang = None
         last_obs_t = None
@@ -1218,6 +1233,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
 
     def send_message(self, message: dict):
         """Send a message to the robot"""
+        print(f"send method {message}", flush=True)
         with self._send_lock:
             self.send_socket.send_pyobj(message)
 
@@ -1442,7 +1458,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
         self,
         next_action: Dict[str, Any],
         timeout: float = 5.0,
-        verbose: bool = False,
+        verbose: bool = True,
         reliable: bool = True,
     ) -> Dict[str, Any]:
         """Send the next action to the robot. Increment the step counter and wait for the action to finish if it is blocking.
@@ -1456,6 +1472,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
         Returns:
             dict: copy of the action that was sent to the robot.
         """
+        print("send message 1", flush=True)
         if verbose:
             logger.info("-> sending", next_action)
             cur_joints = self.get_six_joints()
@@ -1468,6 +1485,7 @@ class HomeRobotZmqClient(AbstractRobotClient):
             print(" - roll: ", cur_joints[5])
         blocking = False
         block_id = None
+        print("send message 2", flush=True)
         with self._act_lock:
 
             # Send it
@@ -1475,10 +1493,12 @@ class HomeRobotZmqClient(AbstractRobotClient):
             next_action["step"] = block_id
             self._iter = block_id + 1
 
+            print("send message 3", flush=True)
             self.send_message(next_action)
 
             while reliable and self._last_step < block_id:
                 # print(next_action)
+                print("send message 4", flush=True)
                 self.send_message(next_action)
                 time.sleep(0.01)
 

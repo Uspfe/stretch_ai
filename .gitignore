@@ -141,4 +141,6 @@ debug*/
 
 */piper_tts/
 piper_tts/
-*.ts
+*.ts# pixi environments
+.pixi/*
+!.pixi/config.toml

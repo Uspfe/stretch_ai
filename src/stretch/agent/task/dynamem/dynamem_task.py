@@ -66,8 +66,9 @@ class DynamemTaskExecutor:
         self.discord_bot = discord_bot
         self.cpu_only = cpu_only
         # If there is no GPU, we have to use CPU
+        print("okkkkk", flush=True)
         if not torch.cuda.is_available():
-            print("Setting up to use CPU as there is no GPU!")
+            print("Setting up to use CPU as there is no GPU!", flush=True)
             self.cpu_only = True
 
         # Other parameters
@@ -83,7 +84,7 @@ class DynamemTaskExecutor:
             raise TypeError(f"Expected AbstractRobotClient, got {type(self.robot)}")
 
         # Create semantic sensor if visual servoing is enabled
-        print("- Create semantic sensor if visual servoing is enabled")
+        print("- Create semantic sensor if visual servoing is enabled", flush=True)
         if self.visual_servo:
             self.parameters["detection"]["module"] = "yoloe" if self.cpu_only else "owlsam"
             self.semantic_sensor = create_semantic_sensor(
@@ -95,7 +96,7 @@ class DynamemTaskExecutor:
             self.parameters["encoder"] = None
             self.semantic_sensor = None
 
-        print("- Start robot agent with data collection")
+        print("- Start robot agent with data collection", flush=True)
         self.agent = RobotAgent(
             self.robot,
             self.parameters,
@@ -106,7 +107,9 @@ class DynamemTaskExecutor:
             manipulation_only=manipulation_only,
             cpu_only=self.cpu_only,
         )
+        print("okkkk1", flush=True)
         self.agent.start()
+        print("okkkk2", flush=True)
 
         # Create grasp object operation
         if self.visual_servo:
@@ -116,9 +119,11 @@ class DynamemTaskExecutor:
             )
         else:
             self.grasp_object = None
+        print("okkkk3", flush=True)
 
         # Task stuff
         self.emote_task = EmoteTask(self.agent)
+        print("okkkk4", flush=True)
 
     def _find(self, target_object: str) -> np.ndarray:
         """Find an object. This is a helper function for the main loop.

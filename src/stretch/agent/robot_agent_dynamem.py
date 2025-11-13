@@ -176,11 +176,13 @@ class RobotAgent(RobotAgentBase):
             stretch_gripper_max = 0.64
             end_link = "link_gripper_s3_body"
         self.transform_node = end_link
+        print("robotagent 1", flush=True)
         self.manip_wrapper = ManipulationWrapper(
             self.robot, stretch_gripper_max=stretch_gripper_max, end_link=end_link
         )
+        print("robotagent   1")
         self.robot.move_to_nav_posture()
-
+        print("robotagent   2")
         self.reset_object_plans()
 
         self.re = re
@@ -196,7 +198,7 @@ class RobotAgent(RobotAgentBase):
         self._running = True
 
         self.rerun_iter = 0
-
+        print("robotagent   3")
         self._start_threads()
 
     def create_obstacle_map(self, parameters):

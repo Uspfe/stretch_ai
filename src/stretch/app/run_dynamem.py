@@ -134,12 +134,12 @@ def main(
         random_goals(bool): randomly sample frontier goals instead of looking for closest
     """
 
-    print("- Load parameters")
+    print("- Load parameters lets gooooo")
     parameters = get_parameters("dynav_config.yaml")
 
     print("- Create robot client")
     robot = HomeRobotZmqClient(robot_ip=robot_ip)
-
+    print("ok 1", flush=True)
     print("- Create task executor")
     executor = DynamemTaskExecutor(
         robot,
@@ -154,22 +154,25 @@ def main(
         manipulation_only=manipulation_only,
         cpu_only=cpu_only,
     )
-
+    print("ok 2", flush=True)
     if not manipulation_only:
         if input_path is None:
             start_command = [("rotate_in_place", "")]
         else:
             start_command = [("read_from_pickle", input_path)]
         executor(start_command)
-
+    print("ok 3", flush=True)
     # Create the prompt we will use to control the robot
     prompt = PickupPromptBuilder()
-
+    print("ok 4", flush=True)
     # Get the LLM client
     llm_client = None
     if use_llm:
         llm_client = get_llm_client(llm, prompt=prompt)
-        chat_wrapper = LLMChatWrapper(llm_client, prompt=prompt, voice=use_voice)
+    print("ok 5", flush=True)        
+    chat_wrapper = LLMChatWrapper(llm_client, prompt=prompt, voice=use_voice)
+    print("ok 6", flush=True)        
+
 
     # Parse things and listen to the user
     ok = True
@@ -197,7 +200,7 @@ def main(
         ok = executor(llm_response)
         target_object = None
         target_receptacle = None
-
+    print("ok 7", flush=True)
     # At the end, disable everything
     robot.stop()
 

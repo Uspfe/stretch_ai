@@ -44,6 +44,7 @@ setup(
             "goto_controller = stretch_ros2_bridge.nodes.goto_controller:main",
             "odom_tf_publisher = stretch_ros2_bridge.nodes.odom_tf_publisher:main",
             "server = stretch_ros2_bridge.remote.server:main",
+            "server_isaac_sim = stretch_ros2_bridge.remote.server_isaac_sim:main",
             "server_no_d405 = stretch_ros2_bridge.remote.server_no_d405:main",
         ],
     },
