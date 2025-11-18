@@ -115,6 +115,7 @@ ENV/
 
 # URDF files
 *.urdf
+!docker/stretch_ai_docker/src/stretch/config/urdf/stretch.urdf
 
 # Webcam calibration images
 webcam_calibration_images/
