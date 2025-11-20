@@ -102,6 +102,8 @@ run_docker_command run -it --rm \
     -v /home/$USER/stretch_user:/home/hello-robot/stretch_user_copy \
     -v /home/$USER/ament_ws/install/stretch_description/share/stretch_description/urdf:/home/hello-robot/stretch_description/share/stretch_description/urdf \
     -e HELLO_FLEET_ID=$HELLO_FLEET_ID \
+    -e RMW_IMPLEMENTATION=rmw_fastrtps_cpp \
+    -e ROS_DISCOVERY_SERVER=127.0.0.1:14520 \
     --ipc=host \
     --pid=host \
     --user $(id -u):$(id -g) \

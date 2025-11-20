@@ -145,3 +145,5 @@ piper_tts/
 *.ts# pixi environments
 .pixi/*
 !.pixi/config.toml
+
+dynamem_log/
