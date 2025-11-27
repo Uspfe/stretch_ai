@@ -16,6 +16,7 @@ from stretch.agent.zmq_client import HomeRobotZmqClient
 from stretch.core.parameters import get_parameters
 from stretch.llms import LLMChatWrapper, PickupPromptBuilder, get_llm_choices, get_llm_client
 
+from stretch.agent.task.dynamem.search_steps import set_global_search_steps, get_global_search_steps
 
 @click.command()
 # by default you are running these codes on your workstation, not on your robot.
@@ -105,6 +106,13 @@ from stretch.llms import LLMChatWrapper, PickupPromptBuilder, get_llm_choices, g
     is_flag=True,
     help="Run everything on CPU",
 )
+@click.option(
+    "--max-search-steps",
+    "--max-search-steps",
+    default=10,
+    type=int,
+    help="Maximum number of search steps for finding an object",
+)
 def main(
     server_ip,
     manual_wait,
@@ -125,6 +133,7 @@ def main(
     llm: str = "qwen25-3B-Instruct",
     manipulation_only: bool = False,
     cpu_only: bool = False,
+    max_search_steps: int = 10,
     **kwargs,
 ):
     """
@@ -133,6 +142,8 @@ def main(
     Args:
         random_goals(bool): randomly sample frontier goals instead of looking for closest
     """
+    set_global_search_steps(max_search_steps)
+    print(f"Set GLOBAL_SEARCH_STEPS to {max_search_steps} (is {get_global_search_steps()})", flush=True)
 
     print("- Load parameters lets gooooo")
     parameters = get_parameters("dynav_config.yaml")

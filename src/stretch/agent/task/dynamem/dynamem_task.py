@@ -23,6 +23,8 @@ from stretch.core import AbstractRobotClient, Parameters
 from stretch.perception import create_semantic_sensor
 from stretch.utils.image import numpy_image_to_bytes
 
+from stretch.agent.task.dynamem.search_steps import get_global_search_steps
+
 # Mapping and perception
 from stretch.utils.logger import Logger
 
@@ -135,7 +137,8 @@ class DynamemTaskExecutor:
             The point where the object is located.
         """
         self.robot.switch_to_navigation_mode()
-        point = self.agent.navigate(target_object)
+        print(f"Searching for {target_object} with max steps {get_global_search_steps()}", flush=True)
+        point = self.agent.navigate(target_object, max_step=get_global_search_steps())
         # `filename` = None means write to default log path (the datetime you started to run the process)
         self.agent.voxel_map.write_to_pickle(filename=None)
         if point is None:
