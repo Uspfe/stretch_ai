@@ -395,6 +395,9 @@ class DynamemTaskExecutor:
                 logger.info("[Pickup task] Exploring.")
                 for _ in range(self.explore_iter):
                     self.agent.run_exploration()
+                
+                # adding this so the map is saved after exploration
+                self.agent.voxel_map.write_to_pickle(filename=None)
             elif command == "find":
                 logger.info("[Pickup task] Finding {}.".format(args))
                 point = self._find(args)
